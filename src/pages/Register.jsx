@@ -36,13 +36,14 @@ const Register = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            accept: 'application/json ',
+            Accept: 'application/json',
           },
           body: JSON.stringify(formData),
         }
       );
       if (!rep.ok) {
-        throw new Error(`Erreur : ${rep.status}`);
+        const response = await rep.json();
+        throw new Error(response.message);
       }
       navigate('/connexion');
     } catch (err) {
