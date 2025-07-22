@@ -44,7 +44,6 @@ const LoginPage = () => {
         const errorData = await rep.json();
         const error = new Error(errorData?.error || 'Erreur serveur');
         error.status = rep.status;
-        error.data = errorData;
         throw error;
       }
       navigate('/offres/professionnelles');
