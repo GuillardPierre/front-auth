@@ -41,17 +41,22 @@ const LoginPage = () => {
         }
       );
       if (!rep.ok) {
-        if (rep.status === 401) {
-          throw new Error("Erreur dans le mot de passe ou dans l'email.");
-        }
-        throw new Error(
-          'Une erreur est survenue lors de la connexion. Veuillez réessayer plus tard.'
-        );
+        const errorData = await rep.json();
+        const error = new Error(errorData.message);
+        error.status = rep.status;
+        error.data = errorData;
+        throw error;
       }
       navigate('/offres/professionnelles');
     } catch (err) {
       console.error('erreur de connexion:', err);
-      setError(err.message);
+      if (err.status === 401) {
+        setError("Erreur dans le mot de passe ou dans l'email.");
+      } else {
+        setError(
+          'Une erreur est survenue lors de la connexion. Veuillez réessayer plus tard.'
+        );
+      }
     }
   };
 
