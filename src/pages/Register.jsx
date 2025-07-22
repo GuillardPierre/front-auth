@@ -1,12 +1,24 @@
-import { useState } from "react";
-import { Form, Button, Container, Card, Row, Col } from "react-bootstrap";
+import { useState } from 'react';
+import {
+  Form,
+  Button,
+  Container,
+  Card,
+  Row,
+  Col,
+  Alert,
+} from 'react-bootstrap';
+import { useNavigate } from 'react-router';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    name: "",
-    password: "",
+    email: '',
+    name: '',
+    password: '',
   });
+
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -15,55 +27,77 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
-    // Don't forget to handle errors, both for yourself (dev) and for the client (via a Bootstrap Alert)
-    // Redirect to Login on success
-    console.log("Form submitted:", formData);
+    setError(null);
+    try {
+      const rep = await fetch(
+        'https://offers-api.digistos.com/api/auth/register',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (!rep.ok) {
+        const errorText = await rep.text();
+        throw new Error(`Erreur ${rep.status} : ${errorText}`);
+      }
+      navigate('/connexion');
+    } catch (err) {
+      console.error("erreur d'inscription:", err);
+      setError(
+        "Une erreur est survenue lors de l'inscription. Veuillez réessayer plus tard."
+      );
+    }
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center min-vh-100">
-      <Row className="w-100 justify-content-center">
+    <Container className='d-flex justify-content-center align-items-center min-vh-100'>
+      <Row className='w-100 justify-content-center'>
         <Col xs={12} sm={8} md={6} lg={4}>
-          <Card className="p-4 shadow-lg">
-            <h1 className="text-center mb-4">Créer un compte</h1>
+          <Card className='p-4 shadow-lg'>
+            <h1 className='text-center mb-4'>Créer un compte</h1>
+
+            {error && <Alert variant='danger'>{error}</Alert>}
+
             <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formEmail">
+              <Form.Group className='mb-3' controlId='formEmail'>
                 <Form.Label>Email</Form.Label>
                 <Form.Control
-                  type="email"
-                  name="email"
+                  type='email'
+                  name='email'
                   value={formData.email}
                   onChange={handleChange}
                   required
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formName">
+              <Form.Group className='mb-3' controlId='formName'>
                 <Form.Label>Nom</Form.Label>
                 <Form.Control
-                  type="text"
-                  name="name"
+                  type='text'
+                  name='name'
                   value={formData.name}
                   onChange={handleChange}
                   required
                 />
               </Form.Group>
 
-              <Form.Group className="mb-4" controlId="formPassword">
+              <Form.Group className='mb-4' controlId='formPassword'>
                 <Form.Label>Mot de passe</Form.Label>
                 <Form.Control
-                  type="password"
-                  name="password"
+                  type='password'
+                  name='password'
                   value={formData.password}
                   onChange={handleChange}
                   required
                 />
               </Form.Group>
 
-              <Button variant="primary" type="submit" className="w-100">
+              <Button variant='primary' type='submit' className='w-100'>
                 S'inscrire
               </Button>
             </Form>
