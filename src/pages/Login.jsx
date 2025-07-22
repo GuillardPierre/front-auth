@@ -42,7 +42,7 @@ const LoginPage = () => {
       );
       if (!rep.ok) {
         const errorData = await rep.json();
-        const error = new Error(errorData.message);
+        const error = new Error(errorData?.error || 'Erreur serveur');
         error.status = rep.status;
         error.data = errorData;
         throw error;
