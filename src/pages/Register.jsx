@@ -29,7 +29,6 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
     try {
       const rep = await fetch(
         'https://offers-api.digistos.com/api/auth/register',
@@ -37,13 +36,13 @@ const Register = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            accept: 'application/json ',
           },
           body: JSON.stringify(formData),
         }
       );
       if (!rep.ok) {
-        const errorText = await rep.text();
-        throw new Error(`Erreur ${rep.status} : ${errorText}`);
+        throw new Error(`Erreur : ${rep.status}`);
       }
       navigate('/connexion');
     } catch (err) {
