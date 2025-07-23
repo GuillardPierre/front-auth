@@ -43,13 +43,12 @@ const LoginPage = () => {
           body: JSON.stringify(formData),
         }
       );
+      const data = await rep.json();
       if (!rep.ok) {
-        const errorData = await rep.json();
-        const error = new Error(errorData?.error || "Erreur serveur");
+        const error = new Error(data?.error || "Erreur serveur");
         error.status = rep.status;
         throw error;
       }
-      const data = await rep.json();
       dispatch(
         loginSuccess({
           token: data.access_token,
