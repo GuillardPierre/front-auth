@@ -4,13 +4,16 @@ import "../assets/styles/Header.css";
 import { useEffect, useState } from "react";
 function Header() {
   const location = useLocation();
-
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("auth");
-    if (!token) setIsConnected(false);
-    else setIsConnected(true);
+    const verifyToken = () => {
+      const raw = localStorage.getItem("auth");
+      const token = JSON.parse(raw);
+      if (token && new Date(token.expiresAt) > new Date()) setIsConnected(true);
+      else setIsConnected(false);
+    };
+    verifyToken();
   }, [location]);
 
   return (

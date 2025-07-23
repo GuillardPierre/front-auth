@@ -1,31 +1,36 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 const Logout = () => {
   const navigate = useNavigate();
+  const raw = localStorage.getItem("auth");
+  const token = JSON.parse(raw);
   useEffect(() => {
     const handleLogout = async () => {
       try {
-        const rep = await fetch(
-          'https://offers-api.digistos.com/api/auth/logout',
-          {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${
-                JSON.parse(localStorage.getItem('auth'))?.token
-              }`,
-            },
+        if (token && new Date(token.expiresAt) > new Date()) {
+          const rep = await fetch(
+            "https://offers-api.digistos.com/api/auth/logout",
+            {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${
+                  JSON.parse(localStorage.getItem("auth"))?.token
+                }`,
+              },
+            }
+          );
+          if (!rep.ok) {
+            const response = await rep.json();
+            throw new Error(response.message);
           }
-        );
-        if (!rep.ok) {
-          const response = await rep.json();
-          throw new Error(response.message);
         }
-        localStorage.removeItem('auth');
-        navigate('/connexion');
       } catch (error) {
         console.error(error);
+      } finally {
+        localStorage.removeItem("auth");
+        navigate("/connexion");
       }
     };
 

@@ -18,10 +18,10 @@ function App() {
         <Route path="/inscription" element={<Register />} />
         <Route path="/connexion" element={<Login />} />
         <Route path="/offres/publiques" element={<OfferPublicList />} />
-        <Route path="/deconnexion" element={<Logout />} />
+        <Route path="/offre/:id" element={<Offer />} />
         <Route element={<PrivateRoute />}>
           <Route path="/offres/professionnelles" element={<OfferProList />} />
-          <Route path="/offre/:id" element={<Offer />} />
+          <Route path="/deconnexion" element={<Logout />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
